@@ -1,6 +1,6 @@
-chrome.storage.local.get(['isEnabled'], (result) => {
+browser.storage.local.get(['isEnabled'], (result) => {
     if (result.isEnabled === false) return;
-    
+  
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     function updateTheme() {
@@ -29,4 +29,3 @@ chrome.storage.local.get(['isEnabled'], (result) => {
     darkModeMediaQuery.addEventListener('change', updateTheme);
     runFor15Seconds();
   });
-  

@@ -2,18 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('on-off-button');
     const text = document.getElementById('button-text');
     document.getElementById("version").addEventListener("click", copyVersionNumber);
-    const stylesheets = [
-      'https://fonts.googleapis.com/icon?family=Material+Icons',
-      'https://alfloyem.github.io/New-UNEC/css/variables/root.css',
-      'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
-  ];
-
-  stylesheets.forEach(url => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = url;
-        document.head.appendChild(link);
-    });
     
     function updateUI(isEnabled) {
         const button = document.getElementById('on-off-button');
@@ -27,14 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
             text.textContent = 'Turn On';
         }
     };
-
+  
     button.addEventListener('click', () => {
-      chrome.storage.local.get(['isEnabled'], (result) => {
+      browser.storage.local.get(['isEnabled']).then((result) => {
         const newState = !(result.isEnabled !== false);
-        chrome.storage.local.set({ isEnabled: newState }, () => {
+        browser.storage.local.set({ isEnabled: newState }).then(() => {
           updateUI(newState);
-          chrome.tabs.query({ url: '*://kabinet.unec.edu.az/*' }, (tabs) => {
-            tabs.forEach(tab => chrome.tabs.reload(tab.id));
+          browser.tabs.query({ url: '*://kabinet.unec.edu.az/*' }).then((tabs) => {
+            tabs.forEach(tab => browser.tabs.reload(tab.id));
           });
         });
       });

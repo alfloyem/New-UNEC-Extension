@@ -14,7 +14,6 @@
             box-sizing: border-box;
             text-decoration: none;
             line-height: auto;
-            user-select: none;
         }
         
         body {
@@ -26,8 +25,6 @@
             align-items: center;
             flex-direction: column;
             gap: 20px;
-            min-width: 400px;
-            font-size: var(--font-size);
         }
 
         header, footer {
@@ -67,7 +64,6 @@
             width: 180px;
             border-radius: 6px;
             padding: 4px 24px;
-            color: var(--primary);
         }
 
         a:hover {
@@ -87,6 +83,7 @@
             z-index: 1;
             left: 50%;
             bottom: 30px;
+            font-size: 14px;
             transform: translateX(-50%);
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
@@ -112,6 +109,7 @@
         body.dark .logo-dark {
             display: block;
         }
+
     </style>
 </head>
 <body class="dark">
@@ -150,14 +148,15 @@
         <div id="button-text">Turn Off</div> 
     </main>
     <footer>
-            <a href="https://github.com/alfloyem/New-UNEC/tree/main" target="_blank">
+            <a href="https://github.com/alfloyem/New-UNEC/tree/main">
                 <i class="fa-solid fa-code"></i>
                 Source Code
             </a>
-            <a href="https://raw.githubusercontent.com/alfloyem/New-UNEC/refs/heads/main/LICENSE" target="_blank">
+            <a href="https://raw.githubusercontent.com/alfloyem/New-UNEC/refs/heads/main/LICENSE">
                 <i class="fa-solid fa-file"></i>
                 LICENSE
             </a>
+        </abbr>
     </footer>
     <script src="popup.js"></script>
 </body>

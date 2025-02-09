@@ -1,4 +1,4 @@
-chrome.storage.local.get(['isEnabled'], (result) => {
+browser.storage.local.get(['isEnabled'], (result) => {
     if (result.isEnabled === false) return;
   
     function replaceContent() {
@@ -49,4 +49,3 @@ chrome.storage.local.get(['isEnabled'], (result) => {
     
     replaceContent();
   });
-  
