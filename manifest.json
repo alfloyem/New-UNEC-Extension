@@ -1,0 +1,64 @@
+{
+    "manifest_version": 3,
+    "name": "New UNEC",
+    "version": "1.2.0",
+    "description": "Changes the content of UNEC pages.",
+    "icons": {
+        "16": "icons/icon-16x16.png",
+        "36": "icons/icon-36x36.png",
+        "48": "icons/icon-48x48.png",
+        "72": "icons/icon-72x72.png",
+        "96": "icons/icon-96x96.png",
+        "144": "icons/icon-144x144.png",
+        "192": "icons/icon-192x192.png",
+        "256": "icons/icon-256x256.png"
+    },
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://kabinet.unec.edu.az/*",
+        "http://kabinet.unec.edu.az/*",
+        "https://raw.githubusercontent.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://kabinet.unec.edu.az/*",
+                "http://kabinet.unec.edu.az/*"
+            ],
+            "js": ["pages/dark-mode.js"]
+        },
+        {
+            "matches": [
+                "https://kabinet.unec.edu.az/",
+                "http://kabinet.unec.edu.az/",
+                "https://kabinet.unec.edu.az/az/",
+                "http://kabinet.unec.edu.az/az/",
+                "https://kabinet.unec.edu.az/az/login",
+                "http://kabinet.unec.edu.az/az/login",
+                "https://kabinet.unec.edu.az/en/",
+                "http://kabinet.unec.edu.az/en/",
+                "https://kabinet.unec.edu.az/en/login",
+                "http://kabinet.unec.edu.az/en/login",
+                "https://kabinet.unec.edu.az/ru/",
+                "http://kabinet.unec.edu.az/ru/",
+                "https://kabinet.unec.edu.az/ru/login",
+                "http://kabinet.unec.edu.az/ru/login"
+            ],
+            "js": ["pages/login.js"]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://alfloyem.github.io; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' https: data:;"
+}
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://alfloyem.github.io/New-UNEC/css/variables/root.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            line-height: auto;
+            user-select: none;
+        }
+        
+        body {
+            background: var(--background);
+            color: var(--text-primary);
+            font-family: var(--fontfamily);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 400px;
+            font-size: var(--font-size);
+        }
+
+        header, footer {
+            width: 100%;
+            background: var(--background-secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+            gap: 10px;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        button {
+            color: var(--primary);
+            font-size: 120px;
+            background: none;
+            border: none;
+        }
+
+        :visited {
+            color: var(--primary);
+        }
+
+        a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            width: 180px;
+            border-radius: 6px;
+            padding: 4px 24px;
+            color: var(--primary);
+        }
+
+        a:hover {
+            color: var(--text-primary);
+            background-color: var(--hover);
+        }
+
+        #toast {
+            visibility: hidden;
+            min-width: 150px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 10px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+    
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #on-off-button {
+            height: 100px;
+        }
+
+        .logo-dark,
+        body.dark .logo-light {
+            height: 20px;
+            display: none;
+        }
+
+        .logo-light,
+        body.dark .logo-dark {
+            display: block;
+        }
+    </style>
+</head>
+<body class="dark">
+    <div id="toast">Version number copied!</div>
+    <header>
+        <abbr title="add-on version" id="version">version 1.02.34.0</abbr>
+        <img class="logo-light" src="assets/icon-stroke.png" alt="">
+        <img class="logo-dark" src="assets/icon-stroke-dark.png" alt="">
+    </header>
+    <main>
+        <svg id="on-off-button" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1538.42 1660.24">
+            <defs>
+              <style>
+                .cls-1 {
+                  fill: none;
+                  stroke: var(--primary);
+                  stroke-linecap: round;
+                  stroke-linejoin: round;
+                  stroke-width: 260px;
+                  transition: stroke-width 0.5s ease, stroke 0.5s ease;
+                }
+
+                #on-off-button.disabled .cls-1 {
+                  stroke-width: 80px;
+                  stroke: var(--text-disabled);
+                }
+              </style>
+            </defs>
+            <g id="Layer_2-2" data-name="Layer 2">
+              <g>
+                <path class="cls-1" d="M1159,384.38c151.69,116.88,249.42,300.35,249.42,506.65,0,353.03-286.18,639.21-639.21,639.21S130,1244.06,130,891.03c0-206.3,97.73-389.77,249.42-506.65"/>
+                <line class="cls-1" x1="765.13" y1="130" x2="765.13" y2="764.98"/>
+              </g>
+            </g>
+          </svg>
+        <div id="button-text">Turn Off</div> 
+    </main>
+    <footer>
+            <a href="https://github.com/alfloyem/New-UNEC/tree/main" target="_blank">
+                <i class="fa-solid fa-code"></i>
+                Source Code
+            </a>
+            <a href="https://raw.githubusercontent.com/alfloyem/New-UNEC/refs/heads/main/LICENSE" target="_blank">
+                <i class="fa-solid fa-file"></i>
+                LICENSE
+            </a>
+    </footer>
+    <script src="popup.js"></script>
+</body>
+</html>
