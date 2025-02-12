@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "New UNEC",
-    "version": "1.2.0",
+    "version": "1.2.5",
     "description": "Changes the content of UNEC pages.",
     "icons": {
         "16": "icons/icon-16x16.png",
