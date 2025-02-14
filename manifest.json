@@ -55,10 +55,5 @@
     ],
     "browser_action": {
         "default_popup": "popup.html"
-    },
-    "applications": {
-        "gecko": {
-            "id": "a8036034-f9ce-472b-9a49-6e7f6fbc005d"
-        }
     }
 }
