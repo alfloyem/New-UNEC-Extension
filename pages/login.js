@@ -9,6 +9,7 @@ browser.storage.local.get(['isEnabled'], (result) => {
                 attachPasswordToggle();
                 applyTranslations();
             });
+            
     }
     
     function attachPasswordToggle() {

@@ -51,6 +51,25 @@
                 "http://kabinet.unec.edu.az/ru/login"
             ],
             "js": ["pages/login.js"]
+        },
+        {
+            "matches": [
+                "https://kabinet.unec.edu.az/",
+                "http://kabinet.unec.edu.az/",
+                "https://kabinet.unec.edu.az/az/",
+                "http://kabinet.unec.edu.az/az/",
+                "https://kabinet.unec.edu.az/az/login",
+                "http://kabinet.unec.edu.az/az/login",
+                "https://kabinet.unec.edu.az/en/",
+                "http://kabinet.unec.edu.az/en/",
+                "https://kabinet.unec.edu.az/en/login",
+                "http://kabinet.unec.edu.az/en/login",
+                "https://kabinet.unec.edu.az/ru/",
+                "http://kabinet.unec.edu.az/ru/",
+                "https://kabinet.unec.edu.az/ru/login",
+                "http://kabinet.unec.edu.az/ru/login"
+            ],
+            "js": ["pages/navbar.js"]
         }
     ],
     "browser_action": {

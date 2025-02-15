@@ -1,31 +1,29 @@
-browser.storage.local.get(['isEnabled'], (result) => {
-    if (result.isEnabled === false) return;
-  
+browser.storage.local.get(['theme'], (result) => {
+    let theme = result.theme;
+    
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    function updateTheme() {
-        if (darkModeMediaQuery.matches) {
+    function updateTheme(theme) {
+        if (theme === 'dark') {
             document.body.classList.add('dark');
         } else {
             document.body.classList.remove('dark');
         }
     }
-
-    function runFor15Seconds() {
-        let seconds = 0;
-        const intervalDuration = 10;
-        const totalDuration = 15000;
-
-        const interval = setInterval(() => {
-            seconds++;
-            updateTheme();
-        }, intervalDuration);
-
-        setTimeout(() => {
-            clearInterval(interval);
-        }, totalDuration);
+    
+    if (!theme) {
+        theme = darkModeMediaQuery.matches ? 'dark' : 'light';
+        
+        browser.storage.local.set({ theme });
     }
+    
+    updateTheme(theme);
 
-    darkModeMediaQuery.addEventListener('change', updateTheme);
-    runFor15Seconds();
-  });
+    darkModeMediaQuery.addEventListener('change', (event) => {
+        if (!theme) {
+            const newTheme = event.matches ? 'dark' : 'light';
+            updateTheme(newTheme);
+            browser.storage.local.set({ theme: newTheme });
+        }
+    });
+});
