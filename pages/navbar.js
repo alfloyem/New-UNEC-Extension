@@ -1,113 +1,147 @@
-// Tarayıcı depolamasından 'isEnabled' ayarını kontrol et
-browser.storage.local.get(['isEnabled'], (result) => {
+browser.storage.local.get(['isEnabled'], async (result) => {
   if (result.isEnabled === false) return;
 
-  // 1. Sidebar içeriğini uzaktan çek ve değiştir
-  async function replaceSidebar() {
-      try {
-          const response = await fetch('https://raw.githubusercontent.com/alfloyem/New-UNEC/main/html/navbar.html');
-          const sidebarHTML = await response.text();
+  // Sidebar, navbar ve footer'ı değiştiriyoruz.
+  async function replaceComponent(component) {
+    const urls = {
+      sidebar: 'https://raw.githubusercontent.com/alfloyem/New-UNEC/main/html/invariant-components/sidebar.html',
+      navbar: 'https://raw.githubusercontent.com/alfloyem/New-UNEC/main/html/invariant-components/navbar.html',
+      footer: 'https://raw.githubusercontent.com/alfloyem/New-UNEC/main/html/invariant-components/footer.html'
+    };
 
-          // "/* SIDEBAR KISMI */" olan bölümü değiştir
-          document.body.innerHTML = document.body.innerHTML.replace('<img class="logo-dark" src="https://alfloyem.github.io/New-UNEC/images/login/logo-dark.png" alt="UNEC Logo">', sidebarHTML);
-
-          // Sidebar işlemlerini tekrar etkinleştir
-          setupSidebar();
-          applyTranslations();
-      } catch (error) {
-          console.error("Sidebar yüklenirken hata oluştu:", error);
-      }
+    try {
+      const response = await fetch(urls[component]);
+      const html = await response.text();
+      document.body.innerHTML = document.body.innerHTML.replace(`<!-- ${component.toUpperCase()} -->`, html);
+      setupComponent(component);
+      await applyTranslations();
+    } catch (error) {
+      console.error(`${component} error:`, error);
+    }
   }
 
-  // 2. Menüyü tekrar etkinleştirme
+  function setupComponent(component) {
+    if (component === 'sidebar') setupSidebar();
+    if (component === 'navbar') setupNavbar();
+    if (component === 'footer') setupFooter();
+  }
+
   function setupSidebar() {
-      const toggleButton = document.getElementById('sidebar-toggle-button');
-      const sidebar = document.getElementById('sidebar');
+    const toggleButton = document.getElementById('sidebar-toggle-button');
+    const sidebar = document.getElementById('sidebar');
 
-      if (!toggleButton || !sidebar) return;
+    if (!toggleButton || !sidebar) return;
 
-      toggleButton.addEventListener("click", toggleSidebar);
-
-      function toggleSidebar() {
-          sidebar.classList.toggle('close');
-          toggleButton.classList.toggle('rotate');
-          closeAllSubMenus();
+    document.body.addEventListener('click', (e) => {
+      if (e.target.closest('#sidebar-toggle-button')) {
+        sidebar.classList.toggle('close');
+        toggleButton.classList.toggle('rotate');
+        closeAllSubMenus();
       }
 
-      function toggleSubMenu(button) {
-          if (!button.nextElementSibling.classList.contains('show')) {
-              closeAllSubMenus();
-          }
-
-          button.nextElementSibling.classList.toggle('show');
-          button.classList.toggle('rotate');
-
-          if (sidebar.classList.contains('close')) {
-              sidebar.classList.toggle('close');
-              toggleButton.classList.toggle('rotate');
-          }
+      if (e.target.closest('#sidebar button')) {
+        toggleSubMenu(e.target.closest('button'));
       }
+    });
 
-      function closeAllSubMenus() {
-          Array.from(sidebar.getElementsByClassName('show')).forEach(ul => {
-              ul.classList.remove('show');
-              ul.previousElementSibling.classList.remove('rotate');
-          });
+    let currentPage = window.location.href; 
+    document.querySelectorAll("#sidebar li a").forEach(link => {
+      if (link.href === currentPage) {
+        link.classList.add("active");
+        let button = link.closest('ul')?.parentElement?.querySelector('button');
+        if (button) button.classList.add('btn-active', 'rotate');
+        let subMenu = link.closest('ul');
+        if (subMenu) subMenu.classList.add('show');
+        link.removeAttribute("href");
       }
-
-      // Sayfa yüklendiğinde aktif menüyü belirle
-      let currentPage = window.location.pathname.split("/").pop();
-      let links = document.querySelectorAll("#sidebar li a");
-
-      links.forEach(link => {
-          if (link.getAttribute("href") === currentPage) {
-              link.classList.add("active");
-
-              let button = link.closest('ul').parentElement.querySelector('button');
-              if (button) {
-                  button.classList.add('btn-active', 'rotate');
-              }
-
-              let subMenu = link.closest('ul');
-              if (subMenu) {
-                  subMenu.classList.add('show');
-              }
-
-              // href kaldırılır
-              link.removeAttribute("href");
-          }
-      });
-
-      // Alt menü butonlarına event ekleme
-      document.querySelectorAll("#sidebar button").forEach(button => {
-          button.addEventListener("click", function () {
-              toggleSubMenu(this);
-          });
-      });
+    });
   }
 
-  // 3. Menü içeriğini uzaktan çek ve uygula
+  function toggleSubMenu(button) {
+    if (!button.nextElementSibling.classList.contains('show')) {
+      closeAllSubMenus();
+    }
+
+    button.nextElementSibling.classList.toggle('show');
+    button.classList.toggle('rotate');
+
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('close')) {
+      sidebar.classList.toggle('close');
+      document.getElementById('sidebar-toggle-button').classList.toggle('rotate');
+    }
+  }
+
+  function closeAllSubMenus() {
+    document.querySelectorAll("#sidebar .sub-menu.show").forEach(menu => {
+      menu.classList.remove('show');
+      let button = menu.previousElementSibling;
+      if (button && button.classList.contains('category-dropdown-button')) {
+        button.classList.remove('rotate');
+      }
+    });
+  }
+
   async function applyTranslations() {
-      const userLang = (navigator.language || "az").split('-')[0];
-      const lang = ["en", "tr", "az"].includes(userLang) ? userLang : "az";
+    const userLang = (navigator.language || "az").split('-')[0];
+    const lang = ["en", "tr", "az", "ru"].includes(userLang) ? userLang : "az";
 
-      try {
-          const response = await fetch("https://raw.githubusercontent.com/alfloyem/New-UNEC/main/localization/navbar.json");
-          const translations = await response.json();
+    try {
+      const response = await fetch("https://raw.githubusercontent.com/alfloyem/New-UNEC/main/localization/navbar.json");
+      const translations = await response.json();
 
-          if (translations[lang]) {
-              for (const [id, text] of Object.entries(translations[lang])) {
-                  const element = document.getElementById(id);
-                  if (element) element.textContent = text;
-              }
-          }
-      } catch (error) {
-          console.error("Menü çeviri yüklenirken hata oluştu:", error);
+      if (translations[lang]) {
+        Object.entries(translations[lang]).forEach(([id, text]) => {
+          const element = document.getElementById(id);
+          if (element) element.textContent = text;
+        });
       }
+    } catch (error) {
+      console.error("localization error:", error);
+    }
   }
 
-  // 4. Sayfa yüklendiğinde işlemleri başlat
-  document.addEventListener("DOMContentLoaded", () => {
-      replaceSidebar();
+  // Gözlemci ile sidebar'ın varlığını kontrol ediyoruz.
+  const observer = new MutationObserver(async () => {
+    if (!document.getElementById('sidebar')) {
+      await replaceComponent('sidebar');
+    }
   });
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Layout güncelleme fonksiyonunu, sidebar yüklendikten sonra çağıracağız.
+  function setupLayoutObserver() {
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+
+    function updateLayout() {
+      if (window.innerWidth > 768) {
+        if (sidebar.classList.contains('close')) {
+          body.style.gridTemplateColumns = '92px 1fr';
+        } else {
+          body.style.gridTemplateColumns = '282px 1fr';
+        }
+      } else {
+        body.style.gridTemplateColumns = '0px 1fr';
+      }
+    }
+
+    window.addEventListener('resize', updateLayout);
+    const layoutObserver = new MutationObserver(updateLayout);
+    layoutObserver.observe(sidebar, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    updateLayout();
+  }
+
+  // Tüm bileşenlerin yüklenmesini bekliyoruz.
+  await Promise.all([
+    replaceComponent('navbar'),
+    replaceComponent('footer'),
+    replaceComponent('sidebar')
+  ]);
+
+  // Sidebar yüklendikten sonra layout observer'ı başlatıyoruz.
+  setupLayoutObserver();
 });
