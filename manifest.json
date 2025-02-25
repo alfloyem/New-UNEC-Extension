@@ -14,6 +14,8 @@
         "256": "icons/icon-256x256.png"
     },
     "permissions": [
+        "webRequest",
+        "webRequestBlocking",
         "activeTab",
         "tabs",
         "storage",
@@ -28,44 +30,31 @@
     "content_scripts": [
         {
             "matches": [
-                "https://kabinet.unec.edu.az/",
-                "http://kabinet.unec.edu.az/",
-                "https://kabinet.unec.edu.az/az/",
-                "http://kabinet.unec.edu.az/az/",
-                "https://kabinet.unec.edu.az/az/login",
-                "http://kabinet.unec.edu.az/az/login",
-                "https://kabinet.unec.edu.az/en/",
-                "http://kabinet.unec.edu.az/en/",
-                "https://kabinet.unec.edu.az/en/login",
-                "http://kabinet.unec.edu.az/en/login",
-                "https://kabinet.unec.edu.az/ru/",
-                "http://kabinet.unec.edu.az/ru/",
-                "https://kabinet.unec.edu.az/ru/login",
-                "http://kabinet.unec.edu.az/ru/login"
+                "*://kabinet.unec.edu.az/",
+                "*://kabinet.unec.edu.az/az/",
+                "*://kabinet.unec.edu.az/az/login",
+                "*://kabinet.unec.edu.az/en/",
+                "*://kabinet.unec.edu.az/en/login",
+                "*://kabinet.unec.edu.az/ru/",
+                "*://kabinet.unec.edu.az/ru/login"
             ],
             "js": ["pages/login.js"]
         },
         {
             "matches": [
-                "http://kabinet.unec.edu.az/az/academicCalendar",
-                "https://kabinet.unec.edu.az/az/academicCalendar"
+                "*://kabinet.unec.edu.az/az/eresults",
+                "*://kabinet.unec.edu.az/az/eresults/*",
+                "*://kabinet.unec.edu.az/en/eresults/*",
+                "*://kabinet.unec.edu.az/ru/eresults/*"
             ],
-            "js": ["pages/announcement.js"]
+            "js": ["pages/eresults.js"]
         },
         {
-            "matches": [
-                "http://kabinet.unec.edu.az/az/academicCalendar",
-                "https://kabinet.unec.edu.az/az/academicCalendar"
-            ],
-            "js": ["pages/navbar.js"]
-        },
-        
-        {
-            "matches": [
-                "https://kabinet.unec.edu.az/*",
-                "http://kabinet.unec.edu.az/*"
-            ],
-            "js": ["pages/dark-mode.js"]
+            "matches": ["*://kabinet.unec.edu.az/*"],
+            "js": [
+                "pages/invariant/sidebar.js",
+                "pages/invariant/footer.js"
+            ]
         }
     ],
     "browser_action": {

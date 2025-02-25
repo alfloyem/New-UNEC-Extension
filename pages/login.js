@@ -8,8 +8,7 @@ browser.storage.local.get(['isEnabled'], (result) => {
                 document.documentElement.innerHTML = data;
                 attachPasswordToggle();
                 applyTranslations();
-            });
-            
+            });    
     }
     
     function attachPasswordToggle() {
@@ -31,7 +30,7 @@ browser.storage.local.get(['isEnabled'], (result) => {
     
     async function applyTranslations() {
         const userLang = (navigator.language || "az").split('-')[0];
-        const lang = ["en", "tr", "az"].includes(userLang) ? userLang : "az";
+        const lang = ["en", "tr", "az", "ru"].includes(userLang) ? userLang : "az";
     
         try {
             const response = await fetch("https://raw.githubusercontent.com/alfloyem/New-UNEC/main/localization/login.json");
