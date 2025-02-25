@@ -24,15 +24,12 @@ async function fetchPageData(pageNumber) {
     
     // 4. td => subject (içerikte <br> varsa ilk satır alınır)
     let subjectText = cells[3].innerText.trim();
-
     if (subjectText.includes('(')) {
-        // Eğer parantez varsa, ikinci rakama kadar olan kısmı al
-        let match = subjectText.match(/(?:\S+\s+)([^\d]+\d+[^\d]+\d+)/);
-        subjectText = match ? match[1].trim() : '';
+      let match = subjectText.match(/(?:\S+\s+)([^\d]+\d+[^\d]+\d+)/);
+      subjectText = match ? match[1].trim() : '';
     } else {
-        // Eğer parantez yoksa, ilk rakama kadar olan kısmı al
-        let match = subjectText.match(/(?:\S+\s+)([^\d]+)/);
-        subjectText = match ? match[1].trim() : '';
+      let match = subjectText.match(/(?:\S+\s+)([^\d]+)/);
+      subjectText = match ? match[1].trim() : '';
     }
 
     // 5. td => examType
@@ -45,9 +42,8 @@ async function fetchPageData(pageNumber) {
     const date = cells[6].textContent.trim();
     
     // 10. td => entranceScore
-const entranceScoreText = cells[9].textContent.trim();
-const entranceScore = entranceScoreText ? parseInt(entranceScoreText, 10) : "";
-
+    const entranceScoreText = cells[9].textContent.trim();
+    const entranceScore = entranceScoreText ? parseInt(entranceScoreText, 10) : "";
     
     // 11. td => examScore
     const examScore = parseInt(cells[10].textContent.trim(), 10);
@@ -80,7 +76,6 @@ async function fetchAllExamData() {
       const pageData = await fetchPageData(page);
       allData = allData.concat(pageData);
   }
-
   console.timeEnd("Veri çekme süresi");
   return allData;
 }
@@ -88,20 +83,23 @@ async function fetchAllExamData() {
 
 // --- Sayfa içerik değiştirme ve Eresults işlevleri ---  
 
-// Aşağıdaki kod, uzaktaki HTML şablonunu yüklüyor, sidebar işlemlerini başlatıyor ve Eresults sayfasına ait tüm işlemleri yürütüyor.
+// Uzak HTML şablonunu yüklüyor, sidebar işlemlerini başlatıyor ve Eresults sayfasına ait işlemleri yürütüyor.
 function replaceContent() {
   fetch('https://raw.githubusercontent.com/alfloyem/New-UNEC/main/html/eresults.html')
     .then(response => response.text())
     .then(data => {
-      // Sayfanın tüm içeriğini uzaktan çekilen HTML ile değiştiriyoruz.
       document.documentElement.innerHTML = data;
       window.siteReplacementCompleted = true;
 
-      // Sidebar (yan menü) işlevselliği için ilgili scripti yüklüyoruz.
       loadScript(browser.runtime.getURL("pages/invariant/sidebar.js"), waitForSidebar);
-
-      // Eresults sayfasına özel işlemleri başlatıyoruz.
       initEresults();
+
+      // Reset butonu event listener'ı burada ekleniyor
+      document.getElementById("reset-eresult-data-collected").addEventListener("click", () => {
+        browser.storage.local.set({ "eresults-data-collected": false }, () => {
+          location.reload();
+        });
+      });
     });
 }
 
@@ -119,7 +117,6 @@ function initializeSidebar() {
     button.addEventListener("click", toggleSidebar);
     button.removeAttribute("onclick");
   });
-
   document.querySelectorAll('[onclick^="toggleSubMenu"]').forEach(button => {
     button.addEventListener("click", function () {
       toggleSubMenu(this);
@@ -138,7 +135,7 @@ function loadScript(url, callback) {
 
 // Eresults sayfasına ait tüm işlemler bu fonksiyon içerisinde tanımlanıyor.
 function initEresults() {
-  // Artık examData global değişkeninde saklanıyor.
+  // Veriler artık window.examData'da saklanıyor.
   const examData = window.examData || [];
   let sortDirections = {};
 
@@ -236,7 +233,7 @@ function initEresults() {
     renderExamTable(examData);
   }
   
-  document.getElementById('reset-filter').addEventListener('click', resetFilters);  
+  document.getElementById('reset-filter').addEventListener('click', resetFilters);
 
   function parseExamDate(dateStr) {
     const parts = dateStr.split(" / ");
@@ -284,7 +281,6 @@ function initEresults() {
         mainElement.classList.add('filter-active');
       });
     }
-
     if (closeFilters) {
       closeFilters.addEventListener('click', () => {
         mainElement.classList.remove('filter-active');
@@ -297,18 +293,31 @@ function initEresults() {
   resetFilters();
 }
 
-// --- Başlangıç: Tarayıcı storage'ından isEnabled kontrolü ve verilerin çekilmesi ---
 
-browser.storage.local.get(['isEnabled'], async (result) => {
+// --- Başlangıç: Tarayıcı storage'ından isEnabled ve eresults-data-collected kontrolü ---
+
+browser.storage.local.get(['isEnabled', 'eresults-data-collected', 'eresultsData'], async (result) => {
   if (result.isEnabled === false) return;
   
   console.time("Toplam işlem süresi");
 
-  const examData = await fetchAllExamData();
-  window.examData = examData;
-  console.log("Fetched examData:", examData);
+  // Eğer "eresults-data-collected" false veya tanımlı değilse, AJAX ile verileri çekiyoruz.
+  if (!result["eresults-data-collected"]) {
+    const examData = await fetchAllExamData();
+    window.examData = examData;
+    console.log("Fetched examData:", examData);
+    // Local storage'a verileri kaydedip, flag'i true yapıyoruz.
+    browser.storage.local.set({ 
+      "eresults-data-collected": true, 
+      "eresultsData": examData 
+    });
+  } else {
+    // Flag true ise, local storage'dan veriyi kullanıyoruz.
+    const examData = result["eresultsData"] || [];
+    window.examData = examData;
+    console.log("Using local examData:", examData);
+  }
   
   replaceContent();
-
   console.timeEnd("Toplam işlem süresi");
 });
